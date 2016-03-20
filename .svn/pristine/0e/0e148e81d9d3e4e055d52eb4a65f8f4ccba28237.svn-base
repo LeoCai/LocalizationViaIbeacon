@@ -1,0 +1,124 @@
+package com.leocai.beaconlocalization.fingerprint;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.RemoteException;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import com.github.mikephil.charting.data.Entry;
+import com.leocai.beaconlocalization.R;
+
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.RangeNotifier;
+import org.altbeacon.beacon.Region;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+public class FingerActivity extends Activity implements BeaconConsumer {
+    private static final int BEACON_SIZE = 16;
+    private static final String TAG = FingerActivity.class.getSimpleName();
+    private BeaconManager beaconManager;
+
+    private List<TableView> views  = new ArrayList<TableView>();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_finger);
+
+        beaconManager = BeaconManager.getInstanceForApplication(this);
+        beaconManager.getBeaconParsers().add(new BeaconParser()
+                .setBeaconLayout("m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24"));
+        beaconManager.bind(this);
+
+        views.add((TableView)findViewById(R.id.a0));
+        views.add((TableView)findViewById(R.id.a1));
+        views.add((TableView)findViewById(R.id.a2));
+        views.add((TableView)findViewById(R.id.a3));
+        views.add((TableView)findViewById(R.id.a4));
+        views.add((TableView)findViewById(R.id.a5));
+        views.add((TableView)findViewById(R.id.a6));
+        views.add((TableView)findViewById(R.id.a7));
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_finger, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBeaconServiceConnect() {
+        beaconManager.setRangeNotifier(new RangeNotifier() {
+            String context;
+            public int i;
+
+            @Override
+            public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+                if (beacons.size() > 0) {
+                    //addLimitBeacons(beacons);
+                    long startTime = System.nanoTime();
+                    for (Beacon beacon : beacons) {
+                        if(beacon.getId3().toInt()<BEACON_SIZE){
+                            for(int index:getAeroIndex(beacon.getId3().toInt())){
+                                views.get(index).addValue(beacon.getDistance());
+                            }
+                        }
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for(TableView tableView:views){
+                                tableView.refresh();
+                            }
+                        }
+                    });
+                    Log.d(TAG,1.0f*(System.nanoTime()-startTime)/1000000000+"");
+                }
+            }
+
+        });
+
+        try {
+
+            beaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
+        } catch (RemoteException e) {
+        }
+    }
+
+    private int[] getAeroIndex(int beaconId) {
+        switch (beaconId){
+            case 0:return new int[]{0};
+            case 3:return new int[]{1};
+            case 12:return new int[]{2,4};
+            case 15:return new int[]{3,5};
+            case 1:return new int[]{6};
+            case 2:return new int[]{7};
+            default:return new int[]{};
+        }
+    }
+}

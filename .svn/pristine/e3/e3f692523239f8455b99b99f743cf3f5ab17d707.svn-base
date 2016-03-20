@@ -1,0 +1,17 @@
+package com.leocai.beaconlocalization.localization.sensorTag;
+
+import java.util.Observable;
+import java.util.Observer;
+
+/**
+ * Created by leocai on 14-12-3.
+ */
+public class BLEObservable extends Observable {
+    public void setDataChanged(){
+        setChanged();
+        notifyObservers();
+    }
+    public void addDataObserver(Observer observer){
+        addObserver(observer);
+    }
+}

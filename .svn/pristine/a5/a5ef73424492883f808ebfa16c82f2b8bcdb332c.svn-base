@@ -1,0 +1,9 @@
+package com.leocai.beaconlocalization.localization.sensorTag;
+
+import java.util.Observer;
+
+/**
+ * Created by leocai on 14-12-3.
+ */
+public interface BeaconObservable extends Observer {
+}

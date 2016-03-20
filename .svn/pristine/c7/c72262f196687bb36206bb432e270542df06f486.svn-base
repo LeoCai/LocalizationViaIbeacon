@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="/home/leocai/workspace/android/beaconlocalization/app/build/intermediates/pre-dexed/debug/classes-e53d447006c34bc2aa8641f45d2bcb659b178abc.jar"
+        jar="/home/leocai/workspace/android/beaconlocalization/app/build/intermediates/exploded-aar/org.altbeacon/android-beacon-library/2.1/classes.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="f0149e444cc1b5858f4017464b56e400bbe4e445"/>
+    <item
+        dex="/home/leocai/workspace/android/beacon-localization/app/build/intermediates/pre-dexed/debug/weka-28ed5121adf9a00f0e68a7c663ee6f2ec899166a.jar"
+        jar="/home/leocai/workspace/android/beacon-localization/app/libs/weka.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="393389a44a4453e8963c809675213d60de3dad04"/>
+    <item
+        dex="/home/leocai/workspace/android/beaconlocalization/app/build/intermediates/pre-dexed/debug/xUtils-2.6.10-1d507e4ceed001b95f6155d4ac96b189ac70b040.jar"
+        jar="/home/leocai/workspace/android/beaconlocalization/app/libs/xUtils-2.6.10.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="8f68604e5fc8dfb67c2d89c2065cddc3b8eca7dc"/>
+    <item
+        dex="/home/leocai/workspace/android/beacon-localization/app/build/intermediates/pre-dexed/debug/MPAndroidChart-v2.0.8-7bcb32174d0db3a5e64818d2f49e223ee39b9ad7.jar"
+        jar="/home/leocai/.gradle/caches/modules-2/files-2.1/com.github.PhilJay/MPAndroidChart/v2.0.8/a4900cefaf173fb8b416d2fe911394bac5a5ba4/MPAndroidChart-v2.0.8.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="0a4900cefaf173fb8b416d2fe911394bac5a5ba4"/>
+    <item
+        dex="/home/leocai/workspace/android/beacon-localization/app/build/intermediates/pre-dexed/debug/classes-767e1f27cbca45411e63f61c280983181d4ca145.jar"
+        jar="/home/leocai/workspace/android/beacon-localization/app/build/intermediates/exploded-aar/org.altbeacon/android-beacon-library/2.1/classes.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="f0149e444cc1b5858f4017464b56e400bbe4e445"/>
+    <item
+        dex="/home/leocai/workspace/android/beacon-localization/app/build/intermediates/pre-dexed/debug/xUtils-2.6.10-6f76225cad412f3df161d54435f68c6ad2fd6467.jar"
+        jar="/home/leocai/workspace/android/beacon-localization/app/libs/xUtils-2.6.10.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="8f68604e5fc8dfb67c2d89c2065cddc3b8eca7dc"/>
+
+</pre-dex-items>

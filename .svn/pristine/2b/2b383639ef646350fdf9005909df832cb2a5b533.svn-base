@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="com.leocai.beaconlocalization.StartActivity">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BeaconMap"
+        android:id="@+id/btnBeaconMap"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SensorTagMap"
+        android:id="@+id/btnSensorTag"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50sp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="KNearBeacons"
+        android:id="@+id/btnKNear"
+        android:layout_marginTop="50sp"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>
+<!-- From: file:/home/leocai/workspace/android/beacon-localization/app/src/main/res/layout/activity_start.xml -->

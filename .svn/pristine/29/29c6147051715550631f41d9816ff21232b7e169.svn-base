@@ -1,0 +1,129 @@
+package com.leocai.beaconlocalization.wekaPhone;
+
+import android.content.Context;
+import android.util.Log;
+
+import com.leocai.beaconlocalization.uitls.ArrayUtils;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import weka.classifiers.Classifier;
+import weka.core.Attribute;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
+
+public class WekaAlgorithm {
+
+    private static final String TAG = "weka";
+    private Classifier cls;
+    private Instances dataUnlabeled;
+
+    public void init(Context context, String modlefile) throws Exception {
+        cls = (Classifier) weka.core.SerializationHelper
+                .read(context.getResources().getAssets().open(modlefile));
+        FastVector atts = new FastVector();
+        Attribute attr0 = new Attribute("b0");
+        Attribute attr1 = new Attribute("b1");
+        Attribute attr2 = new Attribute("b2");
+        Attribute attr3 = new Attribute("b3");
+        Attribute attr4 = new Attribute("b4");
+        Attribute attr5 = new Attribute("b5");
+        Attribute attr6 = new Attribute("b6");
+        Attribute attr7 = new Attribute("b7");
+        Attribute attr8 = new Attribute("b8");
+        Attribute attr9 = new Attribute("b9");
+        Attribute attr10 = new Attribute("b10");
+        Attribute attr11 = new Attribute("b11");
+        Attribute attr12 = new Attribute("b12");
+        Attribute attr13 = new Attribute("b13");
+
+        FastVector attributeValues = new FastVector(8);
+        attributeValues.addElement("0");
+        attributeValues.addElement("1");
+        attributeValues.addElement("2");
+        attributeValues.addElement("3");
+        attributeValues.addElement("4");
+        attributeValues.addElement("5");
+        attributeValues.addElement("6");
+        attributeValues.addElement("7");
+        Attribute attr14 = new Attribute("pos", attributeValues);
+        atts.addElement(attr0);
+        atts.addElement(attr1);
+        atts.addElement(attr2);
+        atts.addElement(attr3);
+        atts.addElement(attr4);
+        atts.addElement(attr5);
+        atts.addElement(attr6);
+        atts.addElement(attr7);
+        atts.addElement(attr8);
+        atts.addElement(attr9);
+        atts.addElement(attr10);
+        atts.addElement(attr11);
+        atts.addElement(attr12);
+        atts.addElement(attr13);
+        atts.addElement(attr14);
+        dataUnlabeled = new Instances("TestInstances", atts, 1);
+        dataUnlabeled.setClassIndex(dataUnlabeled.numAttributes() - 1);
+    }
+
+    public double[] predict(double[] testdata) {
+//        double predict=-1;
+//        double maxClass = -1;
+//        double maxProb = Double.MIN_VALUE;
+
+        double[] probs = null;
+        double[] sortedPorbs;
+
+        int first = -1;
+        int second = -1;
+        try {
+            Instance newInst = new Instance(1, testdata);
+            dataUnlabeled.delete();
+            dataUnlabeled.add(newInst);
+            dataUnlabeled.setClassIndex(dataUnlabeled.numAttributes() - 1);
+//            predict = cls.classifyInstance(dataUnlabeled.firstInstance());
+            probs = cls.distributionForInstance(dataUnlabeled.firstInstance());
+            sortedPorbs = probs.clone();
+            Arrays.sort(sortedPorbs);
+            first = ArrayUtils.search(probs, sortedPorbs[sortedPorbs.length - 1]);
+            second = ArrayUtils.search(probs, sortedPorbs[sortedPorbs.length - 2]);
+//            first = Arrays.binarySearch(probs, sortedPorbs[sortedPorbs.length - 1]);
+//            second = Arrays.binarySearch(probs, sortedPorbs[sortedPorbs.length - 2]);
+
+//            for (int i = 0; i < probs.length; i++) {
+//                double prob = probs[i];
+//                if (maxProb < prob) {
+//                    maxProb = prob;
+//                    maxClass = i;
+//                }
+//            }
+//            Log.d(TAG, Arrays.toString(probs));
+//            Log.d(TAG, maxClass + ":" + maxProb);
+
+//            Log.d(TAG,predict+"");
+//            System.out.println(predict);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return new double[]{first, probs[0], second, probs[1]};
+    }
+
+    public static void main(String args[]) {
+//		WekaTest wekaTest = new WekaTest();
+//		try {
+//			wekaTest.init();
+//			wekaTest.predict(new double[]{0,10.73738084,11.87738066,9.93006961,10.4303044,5.704406757,7});
+//			wekaTest.predict(new double[]{11.03989678,8.139665875,12.93977038,7.48510212,11.61862472,10.60204447,11});
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+    }
+
+}

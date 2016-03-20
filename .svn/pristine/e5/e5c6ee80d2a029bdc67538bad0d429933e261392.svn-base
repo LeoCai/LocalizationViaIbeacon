@@ -1,0 +1,114 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.leocai.beaconlocalization.fingerprint.FingerActivity">
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="visible"
+            android:layout_margin="1dp"
+            android:layout_gravity="center">
+
+            <view
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                class="com.leocai.beaconlocalization.fingerprint.TableView"
+                android:id="@+id/a0"
+                android:layout_weight="1" />
+
+            <view
+                class="com.leocai.beaconlocalization.fingerprint.TableView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/a1"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="visible"
+            android:layout_margin="1dp"
+            android:layout_gravity="center">
+
+            <view
+                class="com.leocai.beaconlocalization.fingerprint.TableView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/a2"
+                android:layout_weight="1" />
+
+            <view
+                class="com.leocai.beaconlocalization.fingerprint.TableView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/a3"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="visible"
+            android:layout_margin="1dp"
+            android:layout_gravity="center">
+
+            <view
+                class="com.leocai.beaconlocalization.fingerprint.TableView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/a4"
+                android:layout_weight="1" />
+
+            <view
+                class="com.leocai.beaconlocalization.fingerprint.TableView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/a5"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="visible"
+            android:layout_margin="1dp"
+            android:layout_gravity="center" >
+
+            <view
+                class="com.leocai.beaconlocalization.fingerprint.TableView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/a6"
+                android:layout_weight="1" />
+
+            <view
+                class="com.leocai.beaconlocalization.fingerprint.TableView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/a7"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

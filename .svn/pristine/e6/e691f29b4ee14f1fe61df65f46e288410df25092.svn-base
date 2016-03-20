@@ -1,0 +1,30 @@
+package com.leocai.beaconlocalization.localization.sensorTag;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Beacon位置信息转换
+ * Created by leocai on 14-12-3.
+ */
+public class BeaconBasedPosInfoUtils {
+    public static byte getNearestBeaconId(byte[] beaconBasedPosInfo) {
+        return beaconBasedPosInfo[1];
+    }
+
+
+    public static byte getNearestBeaconRssi(byte[] beaconBasedPosInfo) {
+        return beaconBasedPosInfo[5];
+    }
+
+    public static List<BeaconInfo> getAllBeaconInfo(byte[] beaconBasedPosInfo) {
+        List<BeaconInfo> beaconInfoList = new ArrayList<BeaconInfo>();
+        for (int i = 0; i < beaconBasedPosInfo.length/3; i++) {
+            int id = beaconBasedPosInfo[i * 3];
+            int rssi = - beaconBasedPosInfo[i * 3 + 1];
+            int measuredPower = beaconBasedPosInfo[i * 3 + 2];
+            beaconInfoList.add(new BeaconInfo(id, rssi, measuredPower));
+        }
+        return beaconInfoList;
+    }
+}

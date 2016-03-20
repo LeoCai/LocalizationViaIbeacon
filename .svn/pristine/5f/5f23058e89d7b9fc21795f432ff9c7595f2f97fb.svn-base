@@ -1,0 +1,285 @@
+package com.leocai.beaconlocalization.sensortag.wekaTag;
+
+import android.app.Activity;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Toast;
+
+import com.leocai.beaconlocalization.R;
+import com.leocai.beaconlocalization.sensortag.BeaconBasedPosInfoUtils;
+import com.leocai.beaconlocalization.sensortag.BeaconBasedPosListener;
+import com.leocai.beaconlocalization.sensortag.BeaconInfo;
+import com.leocai.beaconlocalization.sensortag.BluetoothLeService;
+import com.leocai.beaconlocalization.train.CuIndexSetter;
+import com.leocai.beaconlocalization.wekaPhone.BufferLocalization;
+import com.leocai.beaconlocalization.wekaPhone.WekaAlgorithm;
+import com.lidroid.xutils.ViewUtils;
+import com.lidroid.xutils.view.annotation.event.OnClick;
+
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.distance.ModelSpecificDistanceCalculator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SensorTagWekaActivity extends Activity implements BeaconBasedPosListener, View.OnTouchListener, CuIndexSetter {
+    private final static String TAG = "DeviceControlActivity";
+    public static final String MODEL1 = "tag4.model";
+    private static final String MODEL2 = "tag3.model";
+
+    private String mDeviceAddress;
+    private BluetoothLeService mBluetoothLeService;
+
+    private static final int BEACON_SIZE = 14;
+
+    private WekaAlgorithm wekaAlgorithm;
+    private double predict;
+
+    private List<View> aeroViews=new ArrayList<View>();
+
+    private BufferLocalization bufferLocalization = new BufferLocalization(3);
+
+
+    @OnClick(R.id.btn_model1)
+    void btn_model1(View view){
+        wekaAlgorithm = new WekaAlgorithm();
+        try {
+            wekaAlgorithm.init(this,MODEL1);
+            Toast.makeText(this,"model1",Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @OnClick(R.id.btn_model2)
+    void btn_model2(View view){
+        wekaAlgorithm = new WekaAlgorithm();
+        try {
+            wekaAlgorithm.init(this,MODEL2);
+            Toast.makeText(this,"model2",Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Code to manage Service lifecycle.
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
+            mBluetoothLeService.setBeaconBasedPosListener(SensorTagWekaActivity.this);
+            if (!mBluetoothLeService.initialize()) {
+                Log.e(TAG, "Unable to initialize Bluetooth");
+                finish();
+            }
+            // Automatically connects to the device upon successful start-up initialization.
+            mBluetoothLeService.connect(mDeviceAddress);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mBluetoothLeService = null;
+        }
+    };
+
+    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                invalidateOptionsMenu();
+                Log.d(TAG,"device connected");
+                Toast.makeText(SensorTagWekaActivity.this,"device connected",Toast.LENGTH_LONG).show();
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                invalidateOptionsMenu();
+                mBluetoothLeService.connect(mDeviceAddress);
+                Log.d(TAG,"device disconnected");
+                Toast.makeText(SensorTagWekaActivity.this,"device disconnected",Toast.LENGTH_LONG).show();
+
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                findAndEnableNotification(mBluetoothLeService.getSupportedGattServices());
+            }
+        }
+    };
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_weka);
+        ViewUtils.inject(this);
+
+        Beacon.setDistanceCalculator(new ModelSpecificDistanceCalculator(this, BeaconManager.getDistanceModelUpdateUrl()));
+
+        mDeviceAddress = "34:B1:F7:D5:16:11";
+        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
+        ViewUtils.inject(this);
+        wekaAlgorithm = new WekaAlgorithm();
+        try {
+            wekaAlgorithm.init(this, MODEL1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        aeroViews.add(findViewById(R.id.a0));
+        aeroViews.add(findViewById(R.id.a1));
+        aeroViews.add(findViewById(R.id.a2));
+        aeroViews.add(findViewById(R.id.a3));
+        aeroViews.add(findViewById(R.id.a4));
+        aeroViews.add(findViewById(R.id.a5));
+        aeroViews.add(findViewById(R.id.a6));
+        aeroViews.add(findViewById(R.id.a7));
+        initAeroColor();
+
+
+    }
+
+    private void initAeroColor() {
+        for(View v:aeroViews){
+            v.setBackgroundColor(Color.GRAY);
+        }
+    }
+
+    /**
+     * 使能notification
+     *
+     * @param gattServices
+     */
+    private void findAndEnableNotification(List<BluetoothGattService> gattServices) {
+        if (gattServices == null) return;
+        String uuid;
+        // Loops through available GATT Services.
+        for (BluetoothGattService gattService : gattServices) {
+            List<BluetoothGattCharacteristic> gattCharacteristics =
+                    gattService.getCharacteristics();
+            for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+                uuid = gattCharacteristic.getUuid().toString();
+                final int charaProp = gattCharacteristic.getProperties();
+                String myuuid = uuid.substring(4, 8);
+                if (myuuid.equals("fff1")) {
+                    if ((charaProp & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
+                        Log.d(TAG, "notifyEnabled");
+                        Toast.makeText(SensorTagWekaActivity.this,"notifyEnabled",Toast.LENGTH_LONG).show();
+                        mBluetoothLeService.setCharacteristicNotification(
+                                gattCharacteristic, true);
+
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * beacon信息监听
+     *
+     * @param beaconBasedPosInfo
+     */
+    @Override
+    public void onBeaconBasedPosInfoChanged(byte[] beaconBasedPosInfo) {
+        final List<BeaconInfo> beaconInfoList = BeaconBasedPosInfoUtils.getAllBeaconInfo(beaconBasedPosInfo);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                double dists[] = new double[BEACON_SIZE + 1];
+                String showInfo="";
+                for (BeaconInfo beaconInfo : beaconInfoList) {
+                    int id =beaconInfo.getId();
+                    dists[id] = beaconInfo.getDist();
+                    showInfo+=""+id+":"+String.format("%.2f",dists[id])+"; ";
+                }
+                Log.d(TAG,showInfo);
+                predict = wekaAlgorithm.predict(dists);
+                bufferLocalization.addPredict((int)predict);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(predict == -1) return;
+                        initAeroColor();
+                        aeroViews.get(bufferLocalization.getBufferPredict()).setBackgroundColor(Color.RED);
+                    }
+                });
+            }
+        });
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        if (mBluetoothLeService != null) {
+            final boolean result = mBluetoothLeService.connect(mDeviceAddress);
+            Log.d(TAG, "Connect request result=" + result);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mGattUpdateReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mServiceConnection);
+        mBluetoothLeService = null;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.gatt_services, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private static IntentFilter makeGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        return intentFilter;
+    }
+
+    @Override
+    public int getNearestBeaconId() {
+        return 0;
+    }
+
+    @Override
+    public int[] getBeaconBasedPosition() {
+        return new int[0];
+    }
+
+    public boolean onTouch(View v, MotionEvent event) {
+        return true;
+    }
+
+    @Override
+    public void setCuTrainIndex(int index) {
+    }
+}

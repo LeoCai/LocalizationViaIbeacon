@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="2.1"><source path="/home/leocai/workspace/android/beacon-localization/app/build/intermediates/exploded-aar/org.altbeacon/android-beacon-library/2.1/assets"/></dataSet><dataSet config="main"><source path="/home/leocai/workspace/android/beacon-localization/app/src/main/assets"/></dataSet><dataSet config="debug"><source path="/home/leocai/workspace/android/beacon-localization/app/src/debug/assets"/></dataSet></merger>

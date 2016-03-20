@@ -1,0 +1,162 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.leocai.beaconlocalization.wekaPhone.WekaPhoneActivity">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:layout_marginLeft="20sp"
+        android:layout_marginRight="20sp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="AERO-0"
+            android:id="@+id/a0"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_margin="1dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="AERO-1"
+            android:id="@+id/a1"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_margin="1dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:layout_marginLeft="20sp"
+        android:layout_marginRight="20sp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="AERO-2"
+            android:id="@+id/a2"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_margin="1dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="AERO-3"
+            android:id="@+id/a3"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_margin="1dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:layout_marginLeft="20sp"
+        android:layout_marginRight="20sp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="AERO-4"
+            android:id="@+id/a4"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_margin="1dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="AERO-5"
+            android:id="@+id/a5"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_margin="1dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:layout_marginLeft="20sp"
+        android:layout_marginRight="20sp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="AERO-6"
+            android:id="@+id/a6"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_margin="1dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="AERO-7"
+            android:id="@+id/a7"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_margin="1dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_marginLeft="20sp"
+        android:layout_marginRight="20sp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="model1"
+            android:id="@+id/btn_model1"
+            android:layout_gravity="center" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="model2"
+            android:id="@+id/btn_model2"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10sp" />
+    </LinearLayout>
+
+</LinearLayout>

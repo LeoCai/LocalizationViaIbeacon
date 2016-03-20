@@ -1,0 +1,39 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 18
+    buildToolsVersion "21.1.1"
+
+    defaultConfig {
+        applicationId "com.leocai.beaconlocalization"
+        minSdkVersion 18
+        targetSdkVersion 18
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'org.altbeacon:android-beacon-library:2.1'
+    compile files('libs/xUtils-2.6.10.jar')
+   // compile 'com.github.PhilJay:MPAndroidChart:v2.0.8'
+    compile files('libs/weka.jar')
+    compile(name:'estimote-sdk-preview', ext:'aar')
+
+
+}

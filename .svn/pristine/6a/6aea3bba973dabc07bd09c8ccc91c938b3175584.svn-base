@@ -1,0 +1,21 @@
+package com.leocai.beaconlocalization.wekaPhone;
+
+import android.app.Application;
+import android.test.ApplicationTestCase;
+
+import junit.framework.TestCase;
+
+public class WekaAlgorithmTest extends ApplicationTestCase<Application> {
+
+    WekaAlgorithm wekaAlgorithm = new WekaAlgorithm();
+
+    public WekaAlgorithmTest(Class<Application> applicationClass) {
+        super(applicationClass);
+    }
+
+    public void testPredict() throws Exception {
+        wekaAlgorithm.init(getContext(),"tag3.model");
+        double predict = wekaAlgorithm.predict(new double[]{3.748759298, 1.467199927, 6.319708359, 3.477811001, 3.748759298, 0, 0, 0, 0, 0, 0, 0, 0, 1.565369549, 1});
+
+    }
+}

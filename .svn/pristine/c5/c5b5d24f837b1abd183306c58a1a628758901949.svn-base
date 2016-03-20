@@ -1,0 +1,148 @@
+package com.leocai.beaconlocalization.weka;
+
+import android.app.Activity;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.os.RemoteException;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
+import com.leocai.beaconlocalization.R;
+import com.leocai.beaconlocalization.uitls.FileLogger;
+import com.lidroid.xutils.ViewUtils;
+import com.lidroid.xutils.view.annotation.ViewInject;
+import com.lidroid.xutils.view.annotation.event.OnClick;
+
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.RangeNotifier;
+import org.altbeacon.beacon.Region;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+public class WekaActivity extends Activity  implements BeaconConsumer {
+
+    private BeaconManager beaconManager;
+    private static final int BEACON_SIZE = 16;
+
+    private WekaTest wekaTest;
+    private double predict;
+
+    private List<View> aeroViews=new ArrayList<View>();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_weka);
+        ViewUtils.inject(this);
+        wekaTest = new WekaTest();
+        try {
+            wekaTest.init(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        aeroViews.add(findViewById(R.id.a0));
+        aeroViews.add(findViewById(R.id.a1));
+        aeroViews.add(findViewById(R.id.a2));
+        aeroViews.add(findViewById(R.id.a3));
+        aeroViews.add(findViewById(R.id.a4));
+        aeroViews.add(findViewById(R.id.a5));
+        aeroViews.add(findViewById(R.id.a6));
+        aeroViews.add(findViewById(R.id.a7));
+
+        beaconManager = BeaconManager.getInstanceForApplication(this);
+        beaconManager.getBeaconParsers().add(new BeaconParser()
+                .setBeaconLayout("m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24"));
+        beaconManager.bind(this);
+
+        initAeroColor();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_weka, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void onBeaconServiceConnect() {
+        beaconManager.setRangeNotifier(new RangeNotifier() {
+            String context;
+            public int i;
+
+            @Override
+            public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+                if (beacons.size() > 0) {
+                    //addLimitBeacons(beacons);
+                    double dists[] = new double[BEACON_SIZE];
+                    for (Beacon beacon : beacons) {
+                        if (beacon.getId3().toInt() < BEACON_SIZE) {
+                            dists[beacon.getId3().toInt()] = beacon.getDistance();
+                        }
+                    }
+                    String info = dists[0] + "," + dists[3] + "," + dists[12] + "," + dists[15] + "," + dists[1] + "," + dists[2];
+//                    FileLogger.log("train.csv", info);
+                    Log.d("train.csv", info);
+                    double testData[] = new double[7];
+                    testData[0] = dists[0];
+                    testData[1] = dists[3];
+                    testData[2] = dists[12];
+                    testData[3] = dists[15];
+                    testData[4] = dists[1];
+                    testData[5] = dists[2];
+                    testData[6] = 1;
+                    predict = wekaTest.predict(testData);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            initAeroColor();
+                            aeroViews.get((int)predict).setBackgroundColor(Color.RED);
+//                            tv_pos.setText(predict+"");
+                        }
+                    });
+
+
+                }
+            }
+
+        });
+
+        try {
+
+            beaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
+        } catch (RemoteException e) {
+        }
+    }
+
+    private void initAeroColor() {
+        for(View v:aeroViews){
+            v.setBackgroundColor(Color.GRAY);
+        }
+    }
+}

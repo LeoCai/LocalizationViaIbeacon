@@ -1,0 +1,225 @@
+package com.leocai.beaconlocalization.localization.sensorTag;
+
+import android.app.Activity;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+
+import com.leocai.beaconlocalization.R;
+import com.lidroid.xutils.ViewUtils;
+import com.lidroid.xutils.view.annotation.ViewInject;
+
+import java.util.List;
+
+public class DeviceControlActivity extends Activity implements BeaconBasedPosListener, View.OnTouchListener {
+    private final static String TAG = DeviceControlActivity.class.getSimpleName();
+
+    public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
+    public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
+
+    private String mDeviceAddress;
+    private BluetoothLeService mBluetoothLeService;
+    private boolean mConnected = false;
+
+//    private LocalizationDrawer localizationDrawer;
+
+
+    // Code to manage Service lifecycle.
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
+            mBluetoothLeService.setBeaconBasedPosListener(DeviceControlActivity.this);
+            if (!mBluetoothLeService.initialize()) {
+                Log.e(TAG, "Unable to initialize Bluetooth");
+                finish();
+            }
+            // Automatically connects to the device upon successful start-up initialization.
+            mBluetoothLeService.connect(mDeviceAddress);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mBluetoothLeService = null;
+        }
+    };
+
+    // Handles various events fired by the Service.
+    // ACTION_GATT_CONNECTED: connected to a GATT server.
+    // ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
+    // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
+    // ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
+    //                        or notification operations.
+    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                mConnected = true;
+                invalidateOptionsMenu();
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                mConnected = false;
+                invalidateOptionsMenu();
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                findAndEnableNotification(mBluetoothLeService.getSupportedGattServices());
+            }
+        }
+    };
+    @ViewInject(R.id.beaconId)
+    private TextView textViewBeaconId;
+    private int mode;
+    private float preDist;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.gatt_services_characteristics);
+        ViewUtils.inject(this);
+
+        final Intent intent = getIntent();
+        mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
+
+        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+//        localizationDrawer = new LocalizationDrawer(this);
+//        addContentView(localizationDrawer,
+//                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+    }
+
+    /**
+     * 使能notification
+     *
+     * @param gattServices
+     */
+    private void findAndEnableNotification(List<BluetoothGattService> gattServices) {
+        if (gattServices == null) return;
+        String uuid;
+        // Loops through available GATT Services.
+        for (BluetoothGattService gattService : gattServices) {
+            List<BluetoothGattCharacteristic> gattCharacteristics =
+                    gattService.getCharacteristics();
+            for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+                uuid = gattCharacteristic.getUuid().toString();
+                final int charaProp = gattCharacteristic.getProperties();
+                String myuuid = uuid.substring(4, 8);
+                Log.d(TAG,myuuid);
+                if (myuuid.equals("fff6")) {
+                    if ((charaProp & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
+                        Log.d("prop", "notifyEnabled");
+                        mBluetoothLeService.setCharacteristicNotification(
+                                gattCharacteristic, true);
+
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * beacon信息监听
+     *
+     * @param beaconBasedPosInfo
+     */
+    @Override
+    public void onBeaconBasedPosInfoChanged(byte[] beaconBasedPosInfo) {
+        //beaconId = BeaconBasedPosInfoUtils.getNearestBeaconId(beaconBasedPosInfo);
+        //beaconRssi = BeaconBasedPosInfoUtils.getNearestBeaconRssi(beaconBasedPosInfo);
+        final List<BeaconInfo> beaconInfoList = BeaconBasedPosInfoUtils.getAllBeaconInfo(beaconBasedPosInfo);
+//        localizationDrawer.setBeaconInfoList(beaconInfoList);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String info = "";
+                for (BeaconInfo beaconInfo : beaconInfoList) {
+                    info += beaconInfo.getId() + ": " +
+
+                            String.format("%.2f", beaconInfo.getRealDist()) + "m, " +
+                            beaconInfo.getRssi() + ", " +
+                            beaconInfo.getMeasuredPower() + "\n";
+
+                }
+                textViewBeaconId.setText(info);
+                //textViewBeaconRssi.setText(String.valueOf(beaconRssi));
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        if (mBluetoothLeService != null) {
+            final boolean result = mBluetoothLeService.connect(mDeviceAddress);
+            Log.d(TAG, "Connect request result=" + result);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mGattUpdateReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mServiceConnection);
+        mBluetoothLeService = null;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.gatt_services, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private static IntentFilter makeGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        return intentFilter;
+    }
+
+    @Override
+    public int getNearestBeaconId() {
+        return 0;
+    }
+
+    @Override
+    public int[] getBeaconBasedPosition() {
+        return new int[0];
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+
+        return true;
+    }
+}

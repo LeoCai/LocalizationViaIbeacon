@@ -1,0 +1,106 @@
+package com.leocai.beaconlocalization.localization.sensorTag;
+
+/**
+ * Created by leocai on 14-12-23.
+ */
+public class BeaconInfo {
+    private final double dist;
+    private int id;
+    private int rssi;
+    private int measuredPower;
+    private double x;
+    private double y;
+    private static int scale=1000;
+    private Object realDist;
+
+    public BeaconInfo(int id, int rssi, int measuredPower) {
+        this.id = id;
+        this.rssi = rssi;
+        this.measuredPower = measuredPower;
+        this.dist = computeAccuracy(rssi, measuredPower) ;
+        setPosition(id);
+    }
+
+    private void setPosition(int id) {
+        switch (id){
+            case 1:
+                this.x = 20;
+                this.y = 20;
+                break;
+            case 2:
+                this.x = 800;
+                this.y = 20;
+                break;
+            case 3:
+                this.x = 20;
+                this.y = 800;
+                break;
+            case 4:
+                this.x = 800;
+                this.y = 800;
+                break;
+        }
+    }
+
+    private double computeAccuracy(int rssi, int measuredPower) {
+        if (rssi == 0) {
+            return -1.0D;
+        }
+
+        double ratio = 1.0* rssi / measuredPower;
+        double rssiCorrection = 0.96D + Math.pow(Math.abs(rssi), 3.0D) % 10.0D / 150.0D;
+
+        if (ratio <= 1.0D) {
+            return Math.pow(ratio, 9.98D) * rssiCorrection;
+        }
+        return (0.103D + 0.89978D * Math.pow(ratio, 7.71D)) * rssiCorrection;
+    }
+
+    public int getRssi() {
+        return rssi;
+    }
+
+    public void setRssi(int rssi) {
+        this.rssi = rssi;
+    }
+
+    public int getMeasuredPower() {
+        return measuredPower;
+    }
+
+    public void setMeasuredPower(int measuredPower) {
+        this.measuredPower = measuredPower;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public double getDist() {
+        return dist*scale;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public static void setOffScale(int offScale){
+        scale+= offScale;
+    }
+
+    public double getRealDist() {
+        return dist;
+    }
+}

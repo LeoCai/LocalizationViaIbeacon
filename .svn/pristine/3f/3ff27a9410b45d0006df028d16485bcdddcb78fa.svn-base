@@ -1,0 +1,113 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="com.leocai.beaconlocalization.StartActivity">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BeaconMap"
+        android:id="@+id/btnBeaconMap"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5sp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SensorTagMap"
+        android:id="@+id/btnSensorTag"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5sp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="KNearBeacons"
+        android:id="@+id/btnKNear"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5sp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chart"
+        android:id="@+id/btn_chart"
+        android:layout_gravity="center"
+        android:layout_margin="5sp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="finger"
+        android:id="@+id/btn_finger"
+        android:layout_gravity="center"
+        android:layout_margin="5sp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="train-phone"
+            android:id="@+id/btn_train"
+            android:layout_gravity="center" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="weka-phone"
+            android:id="@+id/btn_weka"
+            android:layout_gravity="center" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="train531"
+            android:id="@+id/btn_train_531" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="test531"
+            android:id="@+id/btn_test_531" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="train-tag"
+            android:id="@+id/btn_sensortag"
+            android:layout_gravity="center" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="weka-tag"
+            android:id="@+id/btn_weka_tag"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="beaconInfo"
+        android:id="@+id/btn_beaconinfo"
+        android:layout_gravity="center" />
+
+</LinearLayout>
